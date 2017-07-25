@@ -1,0 +1,109 @@
+static int dx[]={1,0,0,-1};
+static int dy[]={0,1,-1,0};
+
+public static int[][] DFS(int i,int j,int rows,int cols,char[][] grid,int[][] len,int local)
+{
+    if(grid[i][j]=='#')
+    {
+        //len[i][j]=local;
+        return len;
+    }
+    int testx=0,testy=0;
+    for(int k=0;k<=3;k++)           //check in all 4 directions
+    {
+        testx=dx[k]+i;
+        testy=dy[k]+j;
+    
+    //check boundary condition, and check if permissible, and if already visited(check length should be shorter than the visiting cell
+    if((testx>=0&&testx<rows&&testy>=0&&testy<cols)  && ((grid[testx][testy]=='O') || (grid[testx][testy]=='#')))
+    {
+        if((len[testx][testy]!=0 && local+1<len[testx][testy])||(len[testx][testy]==0))
+        {
+            len[testx][testy]=local+1;
+            len=DFS(testx,testy,rows,cols,grid,len,local+1);
+        }
+    }
+    }
+    
+    return len;
+}
+
+public static int[][] init(int R,int C)
+{
+    int[][] length=new int[R][C];
+    for(int i=0;i<R;i++)
+    {
+        for(int j=0;j<C;j++)
+        {
+            length[i][j]=0;
+        }
+    }
+    return length;
+}
+
+public static int getFood(char[][] grid) {
+        //saerch for the start point and apply DFS
+        int startx=-1,starty=-1;
+        int destx=-1,desty=-1;
+        int i,j=0;
+        for(i=0;i<grid.length;i++)
+        {
+            for(j=0;j<grid[0].length;j++)
+            {
+                if(grid[i][j]=='*')
+                {
+                    startx=i;
+                    starty=j;
+                }
+                
+                if(grid[i][j]=='#')
+                {
+                    destx=i;
+                    desty=j;
+                }
+                
+            }
+          
+        }
+        
+        //System.out.println(destx  + "," + desty);
+        
+        int[][] len=init(grid.length,grid[0].length);
+        len[startx][starty]=1;
+        //len[destx][desty]=-1;
+        int[][] ans=DFS(startx,starty,grid.length,grid[0].length,grid,len,1);
+        
+        for(int k=0;k<grid.length;k++)
+        {
+            for(int l=0;l<grid[0].length;l++)
+            {
+                System.out.print(ans[k][l] + " ");
+            }
+            System.out.println();
+        }
+        
+        if(len[destx][desty]!=0)
+            return len[destx][desty];
+        else
+            return -1;
+    }
+
+
+public static void printmy(ListNode head)
+{
+    while(head!=null)
+    {
+        System.out.print(head.val + " ");
+        head=head.next;
+    }
+    System.out.println();
+}
+
+public static void main (String[] args)
+{
+    char[][] grid ={{'X','X','X','X','X','X'},{'X','*','X','O','O','X'},{'O','O','X','#','O','X'},{'O','O','O','O','X','X'}};
+    
+    int ans=getFood(grid);
+    System.out.print(ans);
+    
+}
